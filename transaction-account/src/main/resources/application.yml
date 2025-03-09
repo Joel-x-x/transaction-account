@@ -1,0 +1,61 @@
+spring:
+  application:
+    name: transaction-account
+
+  # JPA
+  datasource:
+    url: jdbc:mysql://localhost:3306/transaction_account
+    username: root
+    password: ""
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+
+  # Flyway
+  flyway:
+    baseline-on-migrate: true
+
+  # Kafka
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: transaction-account-consumer
+      enable-auto-commit: true
+      auto-offset-reset: earliest
+    producer:
+      bootstrap-servers: localhost:9092
+
+# Swagger
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+    filter: true
+    display-operation-id: true
+    display-request-duration: true
+
+# Server
+server:
+  error:
+    include-stacktrace: never
+
+# Logs
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+
+# API
+api:
+  prefix: /api/v1
+

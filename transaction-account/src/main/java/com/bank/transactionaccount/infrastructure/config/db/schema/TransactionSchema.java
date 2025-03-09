@@ -1,5 +1,6 @@
 package com.bank.transactionaccount.infrastructure.config.db.schema;
 
+import com.bank.transactionaccount.entity.transaction.model.Transaction;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -32,6 +33,9 @@ public class TransactionSchema extends AbstractEntitySchema<UUID> {
     @Column(name = "balance", nullable = false, precision = 18, scale = 2)
     private BigDecimal balance;
 
+    @Column(name = "is_corrective")
+    private Boolean isCorrective;
+
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private AccountSchema accountSchema;
@@ -47,5 +51,38 @@ public class TransactionSchema extends AbstractEntitySchema<UUID> {
         if (balance == null) {
             balance = BigDecimal.ZERO;
         }
+        if (isCorrective == null) {
+            isCorrective = false;
+        }
+    }
+
+    public TransactionSchema(Transaction transaction) {
+        this.setId(transaction.getId());
+        this.setDate(transaction.getDate());
+        this.setTransactionTypeSchema(new TransactionTypeSchema(transaction.getTransactionType()));
+        this.setAmount(transaction.getAmount());
+        this.setBalance(transaction.getBalance());
+        this.setIsCorrective(transaction.getIsCorrective());
+        this.setAccountSchema(new AccountSchema(transaction.getAccount()));
+        this.setCreatedAt(transaction.getCreatedAt());
+        this.setUpdatedAt(transaction.getUpdatedAt());
+        this.setDeletedAt(transaction.getDeletedAt());
+        this.setDeleted(transaction.isDeleted());
+    }
+
+    public Transaction toTransaction() {
+        return Transaction.builder()
+                .id(this.getId())
+                .date(this.getDate())
+                .transactionType(this.getTransactionTypeSchema().toTransactionType())
+                .amount(this.getAmount())
+                .balance(this.getBalance())
+                .isCorrective(this.getIsCorrective())
+                .account(this.getAccountSchema().toAccount())
+                .createdAt(this.getCreatedAt())
+                .updatedAt(this.getUpdatedAt())
+                .deletedAt(this.getDeletedAt())
+                .deleted(this.isDeleted())
+                .build();
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface AccoutTypeGateway {
+public interface AccountTypeGateway {
     AccountType create(AccountType accountType);
     AccountType update(AccountType accountType);
     Optional<AccountType> findById(UUID id);

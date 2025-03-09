@@ -1,5 +1,6 @@
 package com.bank.transactionaccount.infrastructure.config.db.schema;
 
+import com.bank.transactionaccount.entity.transactiontype.model.TransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -26,4 +27,26 @@ public class TransactionTypeSchema extends AbstractEntitySchema<UUID> {
 
     @Column(name = "description", length = 255)
     private String description;
+
+    public TransactionTypeSchema(TransactionType transactionType) {
+        this.setId(transactionType.getId());
+        this.setName(transactionType.getName());
+        this.setDescription(transactionType.getDescription());
+        this.setCreatedAt(transactionType.getCreatedAt());
+        this.setUpdatedAt(transactionType.getUpdatedAt());
+        this.setDeletedAt(transactionType.getDeletedAt());
+        this.setDeleted(transactionType.isDeleted());
+    }
+
+    public TransactionType toTransactionType() {
+        return TransactionType.builder()
+                .id(this.getId())
+                .name(this.getName())
+                .description(this.getDescription())
+                .createdAt(this.getCreatedAt())
+                .updatedAt(this.getUpdatedAt())
+                .deletedAt(this.getDeletedAt())
+                .deleted(this.isDeleted())
+                .build();
+    }
 }
