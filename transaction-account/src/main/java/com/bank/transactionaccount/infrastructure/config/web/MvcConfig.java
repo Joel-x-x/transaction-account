@@ -10,6 +10,8 @@ import com.bank.transactionaccount.infrastructure.config.db.repository.AccountRe
 import com.bank.transactionaccount.infrastructure.config.db.repository.AccountTypeRepository;
 import com.bank.transactionaccount.infrastructure.config.db.repository.TransactionRepository;
 import com.bank.transactionaccount.infrastructure.config.db.repository.TransactionTypeRepository;
+import com.bank.transactionaccount.infrastructure.kafka.report.ReportRequestProducer;
+import com.bank.transactionaccount.infrastructure.kafka.report.ReportResponseConsumer;
 import com.bank.transactionaccount.infrastructure.transaction.gateway.TransactionDatabaseGateway;
 import com.bank.transactionaccount.infrastructure.transactiontype.gateway.TransactionTypeDatabaseGateway;
 import com.bank.transactionaccount.usecase.account.*;
@@ -21,6 +23,7 @@ import com.bank.transactionaccount.usecase.transaction.rules.validator.AccountBa
 import com.bank.transactionaccount.usecase.transactiontype.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.List;
 
@@ -157,9 +160,30 @@ public class MvcConfig {
 
     // Reportes
     @Bean
-    public GenerateReportAccountStatementUseCase generateReportAccountStatementUseCase(AccountRepository accountRepository, TransactionRepository transactionRepository) {
+    public GenerateReportAccountStatementUseCase generateReportAccountStatementUseCase(
+            AccountRepository accountRepository,
+            TransactionRepository transactionRepository,
+            ReportRequestProducer reportRequestProducer,
+            ReportResponseConsumer reportResponseConsumer
+    ) {
         AccountGateway accountGateway = new AccountDatabaseGateway(accountRepository);
         TransactionGateway transactionGateway = new TransactionDatabaseGateway(transactionRepository);
-        return new GenerateReportAccountStatementUseCase(accountGateway, transactionGateway);
+
+        return new GenerateReportAccountStatementUseCase(
+                accountGateway,
+                transactionGateway,
+                reportRequestProducer,
+                reportResponseConsumer
+        );
+    }
+
+    @Bean
+    public ReportRequestProducer reportRequestProducer(KafkaTemplate<String, String> kafkaTemplate) {
+        return new ReportRequestProducer(kafkaTemplate);
+    }
+
+    @Bean
+    public ReportResponseConsumer reportResponseConsumer() {
+        return new ReportResponseConsumer();
     }
 }

@@ -1,13 +1,28 @@
 package com.bank.transactionaccount.infrastructure.kafka.report;
 
+import com.bank.transactionaccount.infrastructure.kafka.report.dto.CustomerPublicData;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ReportResponseConsumer {
-    @KafkaListener(topics = "report-response-topic", groupId = "transaction-account-consumer")
-    public void consumeReportResponse(String message) {
-        System.out.println("Received report data: " + message);
-        // TODO: PROCESAR GENERAR REPORTE
+
+    private CustomerPublicData customerPublicData;
+
+    @KafkaListener(topics = "customer-data-response", groupId = "bank-group")
+    public void listenCustomerResponse(String message) {
+        try {
+            // Deserializar el mensaje JSON en un objeto CustomerPublicData
+            this.customerPublicData = new ObjectMapper().readValue(message, CustomerPublicData.class);
+        } catch (Exception e) {
+            e.printStackTrace();  // Manejo de excepciones en caso de error de deserialización
+        }
     }
+
+    public CustomerPublicData getCustomerData() {
+        return this.customerPublicData;
+    }
+
 }

@@ -21,13 +21,15 @@ spring:
 
   # Kafka
   kafka:
+    bootstrap-servers: localhost:9092
     consumer:
-      bootstrap-servers: localhost:9092
-      group-id: transaction-account-consumer
-      enable-auto-commit: true
+      group-id: bank-group
       auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 # Swagger
 springdoc:

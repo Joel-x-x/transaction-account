@@ -11,8 +11,7 @@ public class ReportRequestProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendReportRequest(String customerId) {
-        String reportRequestMessage = "Requesting report for customer: " + customerId;
-        kafkaTemplate.send("report-request-topic", customerId, reportRequestMessage);
+    public void requestCustomerData(String customerId) {
+        kafkaTemplate.send("customer-data-request", customerId);
     }
 }
