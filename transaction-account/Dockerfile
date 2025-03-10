@@ -1,14 +1,9 @@
-# Usar imagen ligera y segura de Java 17
-FROM gcr.io/distroless/java17
+FROM eclipse-temurin:21.0.3_9-jdk
 
-# Establecer directorio de trabajo
-WORKDIR /app
-
-# Copiar el archivo JAR generado al contenedor
-COPY target/*.jar app.jar
-
-# Exponer el puerto donde correrá la app
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-CMD ["java", "-jar", "app.jar"]
+WORKDIR /root
+
+COPY ./build/libs/*.jar /root/app.jar
+
+ENTRYPOINT ["java", "-jar", "/root/app.jar"]
